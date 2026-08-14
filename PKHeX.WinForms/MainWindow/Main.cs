@@ -111,12 +111,18 @@ public partial class Main : Form
 
     public void LoadInitialFiles(StartupArguments args)
     {
-        var sav = args.SAV!;
-        var path = sav.Metadata.FilePath ?? string.Empty;
-        OpenSAV(sav, path);
+        if (args.SAV is { } sav)
+        {
+            var path = sav.Metadata.FilePath ?? string.Empty;
+            OpenSAV(sav, path);
+        }
+        else
+        {
+            LoadBlankSaveFile(Settings.Startup.DefaultSaveVersion);
+        }
 
-        var pk = args.Entity!;
-        OpenPKM(pk);
+        if (args.Entity is { } pk)
+            OpenPKM(pk);
 
         if (args.Error is { } ex)
             ErrorWindow.ShowErrorDialog(MsgFileLoadFailAuto, ex, true);
@@ -124,8 +130,8 @@ public partial class Main : Form
 
     private void LoadBlankSaveFile(GameVersion version)
     {
-        if (!version.IsValidSavedVersion())
-            version = Latest.Version;
+        if (!version.IsValidSavedVersion() || version == GameVersion.Compass)
+            version = GameVersion.SL;
         var current = C_SAV?.SAV;
         var sav = BlankSaveFile.Get(version, current);
         OpenSAV(sav, string.Empty);

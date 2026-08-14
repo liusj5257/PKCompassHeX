@@ -46,7 +46,12 @@ public sealed class StartupArguments
         else if (Extra.OfType<SAV3GCMemoryCard>().FirstOrDefault() is { } mc && SaveUtil.TryGetSaveFile(mc, out var mcSav))
             SAV = mcSav;
         else
-            SAV = ReadSettingsAnyPKM(startup) ?? BlankSaveFile.Get(startup.DefaultSaveVersion, SAV);
+        {
+            var version = startup.DefaultSaveVersion == GameVersion.Compass
+                ? GameVersion.SL
+                : startup.DefaultSaveVersion;
+            SAV = ReadSettingsAnyPKM(startup) ?? BlankSaveFile.Get(version, SAV);
+        }
     }
 
     // step 3
