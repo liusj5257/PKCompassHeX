@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/AutoLegalityMod/">
+    <Project Path="AutoLegalityMod/AutoModPlugins.csproj" />
+  </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
     <File Path="LICENSE.md" />
@@ -7,6 +10,9 @@
   <Folder Name="/Tests/">
     <Project Path="Tests/PKHeX.Core.Tests/PKHeX.Core.Tests.csproj" />
   </Folder>
+  <Project Path="PKHeX.Core.AutoMod/PKHeX.Core.AutoMod.csproj" />
+  <Project Path="PKHeX.Core.Enhancements/PKHeX.Core.Enhancements.csproj" />
+  <Project Path="PKHeX.Core.Injection/PKHeX.Core.Injection.csproj" />
   <Project Path="PKHeX.Core/PKHeX.Core.csproj" />
   <Project Path="PKHeX.Drawing.Misc/PKHeX.Drawing.Misc.csproj" />
   <Project Path="PKHeX.Drawing.PokeSprite/PKHeX.Drawing.PokeSprite.csproj" />
