@@ -66,6 +66,8 @@ Use Debug or Release configurations. No platform-specific code.
 
 The Auto-Legality Mod plugin and its supporting libraries are included in the solution. Building the WinForms project copies the plugin into the output `plugins` folder, where it is loaded on startup when plugin loading is enabled.
 
+GitHub Actions builds the Windows x64 Release version on pushes and pull requests to `master`. Download the `PKCompassHeX-windows-x64` artifact from a successful workflow run to get the executable and its required files.
+
 The plugin source is based on [santacrab2/PKHeX-Plugins](https://github.com/santacrab2/PKHeX-Plugins), revision [`7544eec`](https://github.com/santacrab2/PKHeX-Plugins/commit/7544eec87c9d60d118ad166afa33262610c6fc57), and is distributed under its MIT license in [AutoLegalityMod/UPSTREAM-LICENSE.txt](AutoLegalityMod/UPSTREAM-LICENSE.txt).
 
 ---
