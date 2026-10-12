@@ -27,6 +27,7 @@ It is based on [PKHeX](https://github.com/kwsch/PKHeX) and programmed in [C#](ht
 - Import/export Pokémon, Mystery Gifts, and more.
 - Pokémon Showdown set and QR code import/export.
 - Cross-generation transfer and conversion.
+- Auto-Legality Mod plugin support for generating and legalizing Pokémon from Showdown sets.
 - **Shiny icons** support (credit: [bdsp-shiny-icons](https://github.com/BlupBlurp/bdsp-shiny-icons), implementation inspired by [PKLumiHex](https://github.com/TalonSabre/PKLumiHex)).
 - Additional bugfixes, UI improvements, and Compass-specific tweaks.
 
@@ -62,6 +63,10 @@ Build with any compiler supporting C# 14.
 ### Build Configurations
 
 Use Debug or Release configurations. No platform-specific code.
+
+The Auto-Legality Mod plugin and its supporting libraries are included in the solution. Building the WinForms project copies the plugin into the output `plugins` folder, where it is loaded on startup when plugin loading is enabled.
+
+The plugin source is based on [santacrab2/PKHeX-Plugins](https://github.com/santacrab2/PKHeX-Plugins), revision [`7544eec`](https://github.com/santacrab2/PKHeX-Plugins/commit/7544eec87c9d60d118ad166afa33262610c6fc57), and is distributed under its MIT license in [AutoLegalityMod/UPSTREAM-LICENSE.txt](AutoLegalityMod/UPSTREAM-LICENSE.txt).
 
 ---
 
