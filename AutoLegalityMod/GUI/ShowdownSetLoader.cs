@@ -247,6 +247,7 @@ public static class ShowdownSetLoader
             IncludeForms = settings.IncludeForms,
             SetShiny = settings.SetShiny,
             SetAlpha = settings.SetAlpha,
+            BaseSpeciesOnly = settings.BaseSpeciesOnly,
             TransferVersion = settings.TransferVersion,
         };
 

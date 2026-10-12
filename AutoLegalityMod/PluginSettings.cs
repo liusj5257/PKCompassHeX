@@ -130,6 +130,10 @@ public class PluginSettings
     [Description("Try to generate the alpha version of the Pokémon if possible.")]
     public bool SetAlpha { get; set; }
 
+    [Category(LivingDex)]
+    [Description("Generate only unevolved Pokémon at level 1 with all individual values set to 31.")]
+    public bool BaseSpeciesOnly { get; set; }
+
     [Category(TransferDex)]
     [Description("Generate Transfer Living Dex destination game")]
     public GameVersion TransferVersion { get; set; } = Latest.Version;

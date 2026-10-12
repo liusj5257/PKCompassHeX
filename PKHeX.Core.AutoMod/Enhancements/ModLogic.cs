@@ -68,6 +68,7 @@ public static class ModLogic
         var tr = APILegality.UseTrainerData ? TrainerSettings.GetSavedTrainerData(sav.Version) : sav;
         var context = sav.Context;
         var generation = sav.Generation;
+        var evolutionTree = EvolutionTree.GetEvolutionTree(context);
         TrackingCount = 0;
         Parallel.For(1, personal.MaxSpeciesID+1, id => //parallel For's end is exclusive
         {
@@ -100,9 +101,12 @@ public static class ModLogic
                     }
                 }
 
+                if (cfg.BaseSpeciesOnly && evolutionTree.Reverse.GetPreEvolutions(s, form).Any())
+                    continue;
+
                 if (!personal.IsPresentInGame(s, form) || FormInfo.IsLordForm(s, form, context) || FormInfo.IsBattleOnlyForm(s, form, generation) || FormInfo.IsFusedForm(s, form, generation) || (FormInfo.IsTotemForm(s, form) && context is not EntityContext.Gen7))
                     continue;
-                var pk = AddPKM(sav, tr, s, form, cfg.SetShiny, cfg.SetAlpha);
+                var pk = AddPKM(sav, tr, s, form, cfg.SetShiny, cfg.SetAlpha, cfg.BaseSpeciesOnly);
                 if (pk is null || pklist.Any(x => x.Species == pk.Species && x.Form == pk.Form && x.Species != 869))
                     continue;
 
@@ -195,9 +199,9 @@ public static class ModLogic
         return f;
     }
 
-    private static PKM? AddPKM(ITrainerInfo sav, ITrainerInfo tr, ushort species, byte form, bool shiny, bool alpha)
+    private static PKM? AddPKM(ITrainerInfo sav, ITrainerInfo tr, ushort species, byte form, bool shiny, bool alpha, bool levelOneMaxIVs = false)
     {
-        if (sav.GetRandomEncounter(species, form, shiny, alpha, out var pk) && pk is { Species: not 0 })
+        if (sav.GetRandomEncounter(species, form, shiny, alpha, out var pk, levelOneMaxIVs) && pk is { Species: not 0 })
         {
             pk.Heal();
             return pk;
@@ -205,6 +209,8 @@ public static class ModLogic
 
         // If we didn't get an encounter, we still need to consider a Gen1->Gen2 trade.
         if (sav is not { Generation: 2 })
+            return null;
+        if (levelOneMaxIVs)
             return null;
 
         tr = new SimpleTrainerInfo(GameVersion.YW) { Language = tr.Language, OT = tr.OT, TID16 = tr.TID16 };
@@ -225,9 +231,12 @@ public static class ModLogic
     /// <param name="pk">Result legal pkm</param>
     /// <returns>True if a valid result was generated, false if the result should be ignored.</returns>
     public static bool GetRandomEncounter(this ITrainerInfo tr, ushort species, byte form, bool shiny, bool alpha, out PKM? pk)
+        => GetRandomEncounter(tr, species, form, shiny, alpha, out pk, false);
+
+    private static bool GetRandomEncounter(this ITrainerInfo tr, ushort species, byte form, bool shiny, bool alpha, out PKM? pk, bool levelOneMaxIVs)
     {
         var blank = EntityBlank.GetBlank(tr);
-        pk = GetRandomEncounter(blank, tr, species, form, shiny, alpha);
+        pk = GetRandomEncounter(blank, tr, species, form, shiny, alpha, levelOneMaxIVs);
         if (pk is null)
             return false;
 
@@ -245,7 +254,7 @@ public static class ModLogic
     /// <param name="shiny"></param>
     /// <param name="alpha"></param>
     /// <returns>Result legal pkm, null if data should be ignored.</returns>
-    private static PKM? GetRandomEncounter(PKM blank, ITrainerInfo tr, ushort species, byte form, bool shiny, bool alpha)
+    private static PKM? GetRandomEncounter(PKM blank, ITrainerInfo tr, ushort species, byte form, bool shiny, bool alpha, bool levelOneMaxIVs)
     {
         blank.Species = species;
         blank.Gender = blank.GetSaneGender();
@@ -275,6 +284,8 @@ public static class ModLogic
             setText += "-C";
         if (species == (ushort)Zygarde && form == 3)
             setText += "-50%-C";
+        if (levelOneMaxIVs)
+            setText += $"{Environment.NewLine}Level: 1{Environment.NewLine}IVs: 31 HP / 31 Atk / 31 Def / 31 SpA / 31 SpD / 31 Spe";
         if ((shiny && !SimpleEdits.IsShinyLockedSpeciesForm(species, blank.Form)) || (shiny && tr.Generation != 6 && blank.Species != (ushort)Vivillon && blank.Form != 18))
             setText += Environment.NewLine + "Shiny: Yes";
 
