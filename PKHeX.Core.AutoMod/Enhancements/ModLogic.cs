@@ -300,10 +300,12 @@ public static class ModLogic
 
         var sset = new ShowdownSet(setText);
         var set = new RegenTemplate(sset) { Nickname = string.Empty };
+        if (levelOneMaxIVs)
+            set.Level = 100;
         template.ApplySetDetails(set);
 
         var t = template.Clone();
-        var almres = tr.TryAPIConvert(set, t);
+        var almres = tr.TryAPIConvert(set, t, preferLowestLevelEncounter: levelOneMaxIVs);
         var pk = almres.Created;
         var success = almres.Status;
 
@@ -312,10 +314,12 @@ public static class ModLogic
 
         sset = new ShowdownSet(setText.Split('\r')[0]);
         set = new RegenTemplate(sset) { Nickname = string.Empty };
+        if (levelOneMaxIVs)
+            set.Level = 100;
         template.ApplySetDetails(set);
 
         t = template.Clone();
-        almres = tr.TryAPIConvert(set, t);
+        almres = tr.TryAPIConvert(set, t, preferLowestLevelEncounter: levelOneMaxIVs);
         pk = almres.Created;
         success = almres.Status;
         if (pk.Species is (ushort)Gholdengo)

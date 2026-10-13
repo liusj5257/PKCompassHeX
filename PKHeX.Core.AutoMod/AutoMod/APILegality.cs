@@ -45,7 +45,7 @@ public static class APILegality
     /// <param name="set">Showdown set object</param>
     /// <param name="satisfied">If the final result is legal or not</param>
     /// <param name="ogenc">Original encounter to prioritize, if available</param>
-    public static PKM GetLegalFromTemplate(this ITrainerInfo dest, PKM template, IBattleTemplate set, out LegalizationResult satisfied, IEncounterable? ogenc = null)
+    public static PKM GetLegalFromTemplate(this ITrainerInfo dest, PKM template, IBattleTemplate set, out LegalizationResult satisfied, IEncounterable? ogenc = null, bool preferLowestLevelEncounter = false)
     {
         RegenSet regen;
         if (set is RegenTemplate t)
@@ -84,6 +84,8 @@ public static class APILegality
 
         var mutations = EncounterMutationUtil.GetSuggested(dest.Context, set.Level);
         var encounters = GetAllEncounters(pk: template, dest, moves: new ReadOnlyMemory<ushort>(set.Moves), gamelist);
+        if (preferLowestLevelEncounter)
+            encounters = encounters.OrderBy(enc => enc is IEncounterEgg ? 1 : 0).ThenBy(enc => enc.LevelMin);
         var criteria = EncounterCriteria.GetCriteria(set, template.PersonalInfo, mutations);
         if (regen.EncounterFilters.Any())
             encounters = encounters.Where(enc => BatchEditingUtil.IsFilterMatch(regen.EncounterFilters, enc));
@@ -1296,7 +1298,7 @@ public static class APILegality
     /// <summary>
     /// Wrapper function for GetLegalFromTemplate but with a Timeout
     /// </summary>
-    public static AsyncLegalizationResult GetLegalFromTemplateTimeout(this ITrainerInfo dest, PKM template, IBattleTemplate set, IEncounterable? enc = null)
+    public static AsyncLegalizationResult GetLegalFromTemplateTimeout(this ITrainerInfo dest, PKM template, IBattleTemplate set, IEncounterable? enc = null, bool preferLowestLevelEncounter = false)
     {
         AsyncLegalizationResult GetLegal()
         {
@@ -1309,7 +1311,7 @@ public static class APILegality
                 if (set is RegenTemplate rs && rs.Regen.Extra.Egg)
                     res = dest.GenerateEgg(rs, out s);
                 else
-                    res = dest.GetLegalFromTemplate(template, set, out s, enc);
+                    res = dest.GetLegalFromTemplate(template, set, out s, enc, preferLowestLevelEncounter);
                 return new AsyncLegalizationResult(res, s);
             }
             catch (MissingMethodException)

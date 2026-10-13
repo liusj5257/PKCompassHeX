@@ -237,9 +237,9 @@ public static class Legalizer
     /// <param name="template">pkm file to legalize</param>
     /// <param name="enc">Encounter to generate with, if available</param>
     /// <returns>LegalizationResult</returns>
-    public static AsyncLegalizationResult TryAPIConvert(this ITrainerInfo tr, IBattleTemplate set, PKM template, IEncounterable? enc = null)
+    public static AsyncLegalizationResult TryAPIConvert(this ITrainerInfo tr, IBattleTemplate set, PKM template, IEncounterable? enc = null, bool preferLowestLevelEncounter = false)
     {
-        var almres = tr.GetLegalFromTemplateTimeout(template, set, enc);
+        var almres = tr.GetLegalFromTemplateTimeout(template, set, enc, preferLowestLevelEncounter);
         if (almres.Status != LegalizationResult.Regenerated)
             return almres;
 
