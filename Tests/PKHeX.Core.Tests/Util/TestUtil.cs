@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace PKHeX.Core.Tests;
@@ -21,13 +22,22 @@ internal static class TestUtil
     private static readonly Lock InitLock = new();
     private static bool IsInitialized;
 
+    [ModuleInitializer]
+    internal static void InitializeTestData() => InitializeLegality();
+
     public static void InitializeLegality()
     {
         lock (InitLock)
         {
             if (IsInitialized)
                 return;
-            // There used to be a lot of static initialization in the legality code, which is now removed.
+
+            var mgdbPath = Environment.GetEnvironmentVariable("PKHEX_TEST_MGDB_PATH");
+            if (string.IsNullOrWhiteSpace(mgdbPath))
+                mgdbPath = Path.GetFullPath(Path.Combine(GetRepoPath(), "..", "mgdb"));
+            if (Directory.Exists(mgdbPath))
+                EncounterEvent.RefreshMGDB(mgdbPath);
+
             IsInitialized = true;
         }
     }
