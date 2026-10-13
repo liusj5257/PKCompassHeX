@@ -1340,6 +1340,7 @@ SAV_HoneyTree.L_Species=종류
 SAV_HoneyTree.L_Time=남은 시간 (분)
 SAV_Inventory.B_Cancel=취소
 SAV_Inventory.B_GiveAll=모두 주기
+SAV_Inventory.givePokemonItems=포켓몬 강화 도구
 SAV_Inventory.B_Save=저장
 SAV_Inventory.B_Sort=정렬
 SAV_Inventory.L_Count=개수:

@@ -19,9 +19,17 @@ public static class WinFormsTranslator
     internal static void TranslateInterface(this Control form, string lang) =>
         TranslateForm(form, GetContext(lang));
 
-    private static string GetTranslationFileNameInternal(ReadOnlySpan<char> lang) => $"almlang_{lang}";
+    private static string GetTranslationFileNameInternal(ReadOnlySpan<char> lang) =>
+        $"almlang_{GetResourceLanguage(lang)}";
 
     private static string GetTranslationFileNameExternal(ReadOnlySpan<char> lang) => $"almlang_{lang}.txt";
+
+    private static string GetResourceLanguage(ReadOnlySpan<char> lang) => lang switch
+    {
+        "zh-Hans" or "zh-Hant" => "zh",
+        "es-419" => "es",
+        _ => lang.ToString(),
+    };
 
     public static string CurrentLanguage
     {

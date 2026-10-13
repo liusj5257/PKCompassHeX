@@ -1340,6 +1340,7 @@ SAV_HoneyTree.L_Species=Specie
 SAV_HoneyTree.L_Time=Tempo rimasto (minuti)
 SAV_Inventory.B_Cancel=Annulla
 SAV_Inventory.B_GiveAll=Dai tutto
+SAV_Inventory.givePokemonItems=Strumenti per modificare i Pokémon
 SAV_Inventory.B_Save=Salva
 SAV_Inventory.B_Sort=Ordina
 SAV_Inventory.L_Count=Conteggio:

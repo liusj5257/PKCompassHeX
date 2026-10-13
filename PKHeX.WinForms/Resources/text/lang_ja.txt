@@ -1340,6 +1340,7 @@ SAV_HoneyTree.L_Species=ポケモン
 SAV_HoneyTree.L_Time=捕獲可能時間 (分)
 SAV_Inventory.B_Cancel=キャンセル
 SAV_Inventory.B_GiveAll=全て取得
+SAV_Inventory.givePokemonItems=ポケモン強化アイテム
 SAV_Inventory.B_Save=保存
 SAV_Inventory.B_Sort=ソート
 SAV_Inventory.L_Count=個数

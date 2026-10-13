@@ -45,6 +45,7 @@ namespace PKHeX.WinForms
             giveAll = new System.Windows.Forms.ToolStripMenuItem();
             giveNone = new System.Windows.Forms.ToolStripMenuItem();
             giveModify = new System.Windows.Forms.ToolStripMenuItem();
+            givePokemonItems = new System.Windows.Forms.ToolStripMenuItem();
             L_Count = new System.Windows.Forms.Label();
             NUD_Count = new System.Windows.Forms.NumericUpDown();
             sortMenu.SuspendLayout();
@@ -169,9 +170,9 @@ namespace PKHeX.WinForms
             // 
             // giveMenu
             // 
-            giveMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { giveAll, giveNone, giveModify });
+            giveMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { giveAll, giveNone, giveModify, givePokemonItems });
             giveMenu.Name = "modifyMenu";
-            giveMenu.Size = new System.Drawing.Size(118, 70);
+            giveMenu.Size = new System.Drawing.Size(118, 92);
             // 
             // giveAll
             // 
@@ -196,6 +197,13 @@ namespace PKHeX.WinForms
             giveModify.Size = new System.Drawing.Size(117, 22);
             giveModify.Text = "Modify";
             giveModify.Click += ModifyAllItems;
+            //
+            // givePokemonItems
+            //
+            givePokemonItems.Name = "givePokemonItems";
+            givePokemonItems.Size = new System.Drawing.Size(117, 22);
+            givePokemonItems.Text = "Pokémon Modifying Items";
+            givePokemonItems.Click += GivePokemonModificationItems;
             // 
             // L_Count
             // 
@@ -260,6 +268,7 @@ namespace PKHeX.WinForms
         private System.Windows.Forms.Label L_Count;
         private System.Windows.Forms.NumericUpDown NUD_Count;
         private System.Windows.Forms.ToolStripMenuItem giveModify;
+        private System.Windows.Forms.ToolStripMenuItem givePokemonItems;
         private System.Windows.Forms.ToolStripMenuItem mnuSortIndex;
         private System.Windows.Forms.ToolStripMenuItem mnuSortIndexReverse;
     }

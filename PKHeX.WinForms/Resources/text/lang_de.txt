@@ -1340,6 +1340,7 @@ SAV_HoneyTree.L_Species=Spezies
 SAV_HoneyTree.L_Time=Verbleibend (Minuten)
 SAV_Inventory.B_Cancel=Abbrechen
 SAV_Inventory.B_GiveAll=Alle
+SAV_Inventory.givePokemonItems=Pokémon-Optimierungsitems
 SAV_Inventory.B_Save=Speichern
 SAV_Inventory.B_Sort=Sortieren
 SAV_Inventory.L_Count=Anzahl:

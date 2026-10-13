@@ -1340,6 +1340,7 @@ SAV_HoneyTree.L_Species=Especie
 SAV_HoneyTree.L_Time=Tiempo rste. (mins.)
 SAV_Inventory.B_Cancel=Cancelar
 SAV_Inventory.B_GiveAll=Todos máx.
+SAV_Inventory.givePokemonItems=Objetos de mejora de Pokémon
 SAV_Inventory.B_Save=Guardar
 SAV_Inventory.B_Sort=Ordenar
 SAV_Inventory.L_Count=Cuenta:

@@ -1340,6 +1340,7 @@ SAV_HoneyTree.L_Species=種類
 SAV_HoneyTree.L_Time=剩餘時間(分鐘)
 SAV_Inventory.B_Cancel=取消
 SAV_Inventory.B_GiveAll=獲得全部
+SAV_Inventory.givePokemonItems=寶可夢強化道具
 SAV_Inventory.B_Save=儲存
 SAV_Inventory.B_Sort=排序
 SAV_Inventory.L_Count=數量:

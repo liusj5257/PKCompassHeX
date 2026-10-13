@@ -340,12 +340,15 @@ public sealed partial class SAV_Inventory : Form
         {
             giveMenu.Items.Remove(giveAll);
             giveMenu.Items.Remove(giveModify);
+            giveMenu.Items.Remove(givePokemonItems);
         }
         else if (!giveMenu.Items.Contains(giveAll))
         {
             giveMenu.Items.Insert(0, giveAll);
             giveMenu.Items.Add(giveModify);
+            giveMenu.Items.Add(givePokemonItems);
         }
+        givePokemonItems.Enabled = pouch.GetAllItems().ToArray().Any(IsPokemonModificationItem);
         NUD_Count.Value = Math.Max(1, pouch.MaxCount - 4);
     }
 
@@ -378,10 +381,22 @@ public sealed partial class SAV_Inventory : Form
     private void GiveAllItems(object sender, EventArgs e)
     {
         var pouch = Bag.Pouches[CurrentPouch];
+        GiveItems(pouch, pouch.GetAllItems().ToArray(), replacePouch: true);
+    }
+
+    private void GivePokemonModificationItems(object sender, EventArgs e)
+    {
+        var pouch = Bag.Pouches[CurrentPouch];
+        var items = pouch.GetAllItems().ToArray().Where(IsPokemonModificationItem).ToArray();
+        if (items.Length != 0)
+            GiveItems(pouch, items, replacePouch: false);
+    }
+
+    private void GiveItems(InventoryPouch pouch, ushort[] items, bool replacePouch)
+    {
         if (!GetModifySettings(pouch, out var truncate, out var shuffle))
             return;
 
-        var items = pouch.GetAllItems().ToArray();
         // No need to trim the list on truncation; we filter by IsLegal.
         // GiveItem reaching a full pouch will fail silently (no exception thrown).
         // This is equivalent to filtering and truncating eagerly.
@@ -391,9 +406,32 @@ public sealed partial class SAV_Inventory : Form
                 Util.Rand.Shuffle(items);
         }
 
-        ModifyPouch(CurrentPouch, p => p.GiveAllItems(Bag, items, (int)NUD_Count.Value));
+        ModifyPouch(CurrentPouch, p =>
+        {
+            if (replacePouch)
+            {
+                p.GiveAllItems(Bag, items, (int)NUD_Count.Value);
+                return;
+            }
+
+            foreach (var item in items)
+                p.GiveItem(Bag, item, (int)NUD_Count.Value);
+        });
         System.Media.SystemSounds.Asterisk.Play();
     }
+
+    private bool IsPokemonModificationItem(ushort item) => Origin.Context switch
+    {
+        EntityContext.Gen3 => item is 63 or 64 or 65 or 66 or 67 or 69 or 70 or 71,
+        EntityContext.Gen4 or EntityContext.Gen5 or EntityContext.Gen6 or EntityContext.Gen7 or EntityContext.Gen8 or EntityContext.Gen9 or EntityContext.Gen9a =>
+            item is 45 or 46 or 47 or 48 or 49 or 51 or 52 or 53
+                or >= 149 and <= 154
+                or >= 565 and <= 571
+                or 645 or 795 or 796
+                or >= 1231 and <= 1251
+                or 1606,
+        _ => false,
+    };
 
     private static bool GetModifySettings(InventoryPouch pouch, out bool truncate, out bool shuffle)
     {
