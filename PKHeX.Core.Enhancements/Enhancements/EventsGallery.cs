@@ -16,7 +16,7 @@ public static class EventsGallery
     /// Downloads the entire repository from GitHub and extracts the contents to the <see cref="dest"/>.
     /// </summary>
     /// <param name="dest">Location to extract the repository to</param>
-    /// <param name="entire">True to Download the current repository, false to only download the latest release.</param>
+    /// <param name="entire">True to download the full repository, false to download only its Released database.</param>
     public static void DownloadMGDBFromGitHub(string dest, bool entire)
     {
         if (entire)
@@ -44,7 +44,8 @@ public static class EventsGallery
 
     private static void DownloadReleasedMGDB(string dest)
     {
-        var temp = Path.Combine(Path.GetTempPath(), $"mgdb-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(dest);
+        var temp = Path.Combine(dest, $".eventsgallery-{Guid.NewGuid():N}");
         Directory.CreateDirectory(temp);
         try
         {
