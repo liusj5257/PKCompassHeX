@@ -57,15 +57,22 @@ public static class EventsGallery
 
     private static void DownloadAndExtractZip(string url, string dest)
     {
-        const string temp = "temp.zip";
+        var temp = Path.Combine(Path.GetTempPath(), $"mgdb-{Guid.NewGuid():N}.zip");
 #pragma warning disable SYSLIB0014 // Type or member is obsolete
-        using (WebClient client = new())
+        try
         {
-            client.DownloadFile(new Uri(url), temp);
+            using (WebClient client = new())
+            {
+                client.DownloadFile(new Uri(url), temp);
+            }
+
+            ZipFile.ExtractToDirectory(temp, dest);
+        }
+        finally
+        {
+            if (File.Exists(temp))
+                File.Delete(temp);
         }
 #pragma warning restore SYSLIB0014 // Type or member is obsolete
-
-        ZipFile.ExtractToDirectory(temp, dest);
-        File.Delete(temp);
     }
 }

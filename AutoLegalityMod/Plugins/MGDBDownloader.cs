@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using AutoModPlugins.Properties;
 using PKHeX.Core;
@@ -9,7 +10,7 @@ namespace AutoModPlugins;
 
 public class MGDBDownloader : AutoModPlugin
 {
-    public override string Name => "Download MGDB";
+    public override string Name => "Download Latest MGDB";
     public override int Priority => 1;
     public static string MGDatabasePath => Path.Combine(Directory.GetCurrentDirectory(), "mgdb");
 
@@ -23,26 +24,57 @@ public class MGDBDownloader : AutoModPlugin
 
     private static void DownloadMGDB(object? o, EventArgs e)
     {
-        if (Directory.Exists(MGDatabasePath))
+        var hasExistingDatabase = Directory.Exists(MGDatabasePath);
+        if (hasExistingDatabase)
         {
-            var result = WinFormsUtil.Prompt(MessageBoxButtons.YesNo, "MGDB already exists!", "Update MGDB?");
+            var result = WinFormsUtil.Prompt(MessageBoxButtons.YesNo, "MGDB already exists!", "Replace it with the latest public MGDB release?");
             if (result != DialogResult.Yes)
                 return;
-
-            DeleteDirectory(MGDatabasePath); // Adding events will be handled by the next conditional
         }
-        if (Directory.Exists(MGDatabasePath))
-            return;
 
-        var prompt = WinFormsUtil.Prompt(MessageBoxButtons.YesNoCancel, "Download entire database?", "Download the entire database, which includes past generation events?", "Selecting No will download only the public release of the database.");
+        var parent = Path.GetDirectoryName(MGDatabasePath)!;
+        var downloadPath = Path.Combine(parent, $".mgdb-download-{Guid.NewGuid():N}");
+        var backupPath = Path.Combine(parent, $".mgdb-backup-{Guid.NewGuid():N}");
 
-        if (prompt == DialogResult.Cancel)
-            return;
+        try
+        {
+            Directory.CreateDirectory(downloadPath);
+            EventsGallery.DownloadMGDBFromGitHub(downloadPath, entire: false);
+            if (!MysteryUtil.GetGiftsFromFolder(downloadPath).Any())
+                throw new InvalidDataException("The downloaded archive did not contain any recognized mystery gifts.");
 
-        var entire = prompt == DialogResult.Yes;
-        EventsGallery.DownloadMGDBFromGitHub(MGDatabasePath, entire);
-        WinFormsUtil.Alert("Download Finished");
-        EncounterEvent.RefreshMGDB(MGDatabasePath);
+            if (hasExistingDatabase)
+                Directory.Move(MGDatabasePath, backupPath);
+
+            try
+            {
+                Directory.Move(downloadPath, MGDatabasePath);
+                EncounterEvent.RefreshMGDB(MGDatabasePath);
+            }
+            catch
+            {
+                if (Directory.Exists(MGDatabasePath))
+                    DeleteDirectory(MGDatabasePath);
+                if (Directory.Exists(backupPath))
+                    Directory.Move(backupPath, MGDatabasePath);
+                if (hasExistingDatabase)
+                    EncounterEvent.RefreshMGDB(MGDatabasePath);
+                else
+                    EncounterEvent.RefreshMGDB();
+                throw;
+            }
+
+            if (Directory.Exists(backupPath))
+                DeleteDirectory(backupPath);
+
+            WinFormsUtil.Alert("Latest MGDB downloaded and loaded.");
+        }
+        catch (Exception ex)
+        {
+            if (Directory.Exists(downloadPath))
+                DeleteDirectory(downloadPath);
+            WinFormsUtil.Error("Failed to download or load the latest MGDB.", ex.Message);
+        }
     }
 
     public static void DeleteDirectory(string target_dir)
