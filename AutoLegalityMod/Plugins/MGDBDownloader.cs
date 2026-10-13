@@ -27,7 +27,7 @@ public class MGDBDownloader : AutoModPlugin
         var hasExistingDatabase = Directory.Exists(MGDatabasePath);
         if (hasExistingDatabase)
         {
-            var result = WinFormsUtil.Prompt(MessageBoxButtons.YesNo, "MGDB already exists!", "Replace it with the latest public MGDB release?");
+            var result = WinFormsUtil.Prompt(MessageBoxButtons.YesNo, "MGDB already exists!", "Replace it with the latest EventsGallery Released database?");
             if (result != DialogResult.Yes)
                 return;
         }

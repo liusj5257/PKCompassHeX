@@ -10,14 +10,7 @@ namespace PKHeX.Core.Enhancements;
 /// </summary>
 public static class EventsGallery
 {
-    private const string RepoURL = "https://github.com/projectpokemon/EventsGallery/archive/master.zip";
-    private const string RepoReleaseURL = "https://api.github.com/repos/projectpokemon/EventsGallery/releases/latest";
-
-    public static string GetMGDBDownloadURL()
-    {
-        var json_data = NetUtil.DownloadString(RepoReleaseURL);
-        return json_data.Split("browser_download_url")[1][ 3..].Split('"')[0];
-    }
+    private const string RepoURL = "https://github.com/projectpokemon/EventsGallery/archive/refs/heads/master.zip";
 
     /// <summary>
     /// Downloads the entire repository from GitHub and extracts the contents to the <see cref="dest"/>.
@@ -32,14 +25,8 @@ public static class EventsGallery
         }
         else
         {
-            DownloadRelease(dest);
+            DownloadReleasedMGDB(dest);
         }
-    }
-
-    private static void DownloadRelease(string dest)
-    {
-        var downloadURL = GetMGDBDownloadURL();
-        DownloadAndExtractZip(downloadURL, dest);
     }
 
     private static void DownloadEntireRepo(string dest)
@@ -53,6 +40,28 @@ public static class EventsGallery
         Directory.Delete(getPath("Extras"), true);
         File.Delete(getPath(".gitignore"));
         File.Delete(getPath("README.md"));
+    }
+
+    private static void DownloadReleasedMGDB(string dest)
+    {
+        var temp = Path.Combine(Path.GetTempPath(), $"mgdb-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(temp);
+        try
+        {
+            DownloadAndExtractZip(RepoURL, temp);
+
+            var repo = Path.Combine(temp, "EventsGallery-master");
+            var released = Path.Combine(repo, "Released");
+            if (!Directory.Exists(released))
+                throw new InvalidDataException("The downloaded EventsGallery archive did not contain a Released database.");
+
+            Directory.Move(released, Path.Combine(dest, "Released"));
+        }
+        finally
+        {
+            if (Directory.Exists(temp))
+                Directory.Delete(temp, recursive: true);
+        }
     }
 
     private static void DownloadAndExtractZip(string url, string dest)
