@@ -85,7 +85,7 @@ public static class APILegality
         var mutations = EncounterMutationUtil.GetSuggested(dest.Context, set.Level);
         var encounters = GetAllEncounters(pk: template, dest, moves: new ReadOnlyMemory<ushort>(set.Moves), gamelist);
         if (preferLowestLevelEncounter)
-            encounters = encounters.OrderBy(enc => enc is IEncounterEgg ? 1 : 0).ThenBy(enc => enc.LevelMin);
+            encounters = encounters.OrderBy(enc => enc is IEncounterEgg ? 0 : 1).ThenBy(enc => enc.LevelMin);
         var criteria = EncounterCriteria.GetCriteria(set, template.PersonalInfo, mutations);
         if (regen.EncounterFilters.Any())
             encounters = encounters.Where(enc => BatchEditingUtil.IsFilterMatch(regen.EncounterFilters, enc));
