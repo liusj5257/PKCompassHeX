@@ -101,7 +101,7 @@ public static class ModLogic
                     }
                 }
 
-                if (cfg.BaseSpeciesOnly && evolutionTree.Reverse.GetPreEvolutions(s, form).Any())
+                if (cfg.BaseSpeciesOnly && !IsBaseSpecies(evolutionTree, (Species)s, form))
                     continue;
 
                 if (!personal.IsPresentInGame(s, form) || FormInfo.IsLordForm(s, form, context) || FormInfo.IsBattleOnlyForm(s, form, generation) || FormInfo.IsFusedForm(s, form, generation) || (FormInfo.IsTotemForm(s, form) && context is not EntityContext.Gen7))
@@ -179,6 +179,12 @@ public static class ModLogic
     private static bool IsRegionalSH(Species s) => s is Meowth or Slowpoke or Ponyta or Rapidash or Slowbro or Slowking or Farfetchd or Weezing or MrMime or Articuno or Moltres or Zapdos or Corsola or Zigzagoon or Linoone or Darumaka or Darmanitan or Yamask or Stunfisk;
     private static bool IsRegionalSM(Species s) => s is Rattata or Raticate or Raichu or Sandshrew or Sandslash or Vulpix or Ninetales or Diglett or Dugtrio or Meowth or Persian or Geodude or Graveler or Golem or Grimer or Muk or Marowak;
 
+    internal static bool IsBaseSpecies(EvolutionTree evolutionTree, Species species, byte form) =>
+        !evolutionTree.Reverse.GetPreEvolutions((ushort)species, form).Any();
+
+    internal static void SetBaseSpeciesOnlyLevel(PKM pk, IEncounterTemplate encounter) =>
+        pk.CurrentLevel = encounter is IEncounterEgg ? (byte)1 : encounter.LevelMin;
+
     public static byte GetBaseForm(Species s, byte f, ITrainerInfo sav)
     {
         var HasRegionalForm = sav.Version switch
@@ -206,7 +212,7 @@ public static class ModLogic
             if (levelOneMaxIVs)
             {
                 var encounter = new LegalityAnalysis(pk).EncounterMatch;
-                pk.CurrentLevel = encounter is IEncounterEgg ? (byte)1 : encounter.LevelMin;
+                SetBaseSpeciesOnlyLevel(pk, encounter);
             }
             pk.Heal();
             return pk;

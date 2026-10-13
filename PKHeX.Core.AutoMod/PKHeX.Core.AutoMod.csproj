@@ -5,4 +5,7 @@
   <ItemGroup>
     <ProjectReference Include="..\PKHeX.Core\PKHeX.Core.csproj" Private="false" />
   </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="PKHeX.Core.Tests" />
+  </ItemGroup>
 </Project>

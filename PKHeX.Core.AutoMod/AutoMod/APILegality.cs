@@ -186,7 +186,7 @@ public static class APILegality
             }
 
             if (preferLowestLevelEncounter && enc is IEncounterEgg)
-                pk.CurrentLevel = 1;
+                ModLogic.SetBaseSpeciesOnlyLevel(pk, enc);
 
             if (pk is PK1 pk1 && pk1.TradebackValid())
             {
