@@ -137,6 +137,25 @@ public abstract class MysteryGift : IEncounterable, IMoveset, ITrainerID32, IFat
     public virtual Moveset Moves { get => default; set { } }
     public virtual bool HasFixedIVs => true;
     public virtual void GetIVs(Span<int> value) { }
+    public void SetRandomIVsToMax(PKM pk)
+    {
+        Span<int> giftIVs = stackalloc int[6];
+        Span<int> pokemonIVs = stackalloc int[6];
+        GetIVs(giftIVs);
+        pk.GetIVs(pokemonIVs);
+
+        bool modified = false;
+        for (int i = 0; i < giftIVs.Length; i++)
+        {
+            if (giftIVs[i] <= 31)
+                continue;
+            pokemonIVs[i] = 31;
+            modified = true;
+        }
+
+        if (modified)
+            pk.SetIVs(pokemonIVs);
+    }
     public virtual bool IsShiny => false;
     public abstract Shiny Shiny { get; }
     public abstract bool IsEgg { get; set; }

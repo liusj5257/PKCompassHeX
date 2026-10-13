@@ -428,7 +428,13 @@ public partial class SAV_MysteryGiftDB : Form
             return;
 
         int box = BoxView.Box.CurrentBox;
-        int ctr = SAV.LoadBoxes(Results, out var result, box, clearAll, overwrite, settings);
+        var pokemon = Results.Select(gift =>
+        {
+            var pk = gift.ConvertToPKM(SAV);
+            gift.SetRandomIVsToMax(pk);
+            return pk;
+        });
+        int ctr = SAV.LoadBoxes(pokemon, out var result, box, clearAll, overwrite, settings);
         if (ctr <= 0)
             return;
 
