@@ -84,7 +84,7 @@ public static class WinFormsTranslator
     {
         var file = GetTranslationFileNameInternal(lang);
         // Check to see if the desired translation file exists in the same folder as the executable
-        string externalLangPath = GetTranslationFileNameExternal(file);
+        string externalLangPath = GetTranslationFileNameExternal(lang);
         if (File.Exists(externalLangPath))
         {
             try { return File.ReadAllText(externalLangPath); }

@@ -203,13 +203,13 @@ public static class ModLogic
     {
         if (sav.GetRandomEncounter(species, form, shiny, alpha, out var pk, levelOneMaxIVs) && pk is { Species: not 0 })
         {
-            pk.Heal();
             if (levelOneMaxIVs)
             {
                 var encounter = new LegalityAnalysis(pk).EncounterMatch;
                 if (encounter is not IEncounterEgg)
                     pk.CurrentLevel = encounter.LevelMin;
             }
+            pk.Heal();
             return pk;
         }
 
