@@ -206,8 +206,7 @@ public static class ModLogic
             if (levelOneMaxIVs)
             {
                 var encounter = new LegalityAnalysis(pk).EncounterMatch;
-                if (encounter is not IEncounterEgg)
-                    pk.CurrentLevel = encounter.LevelMin;
+                pk.CurrentLevel = encounter is IEncounterEgg ? (byte)1 : encounter.LevelMin;
             }
             pk.Heal();
             return pk;
