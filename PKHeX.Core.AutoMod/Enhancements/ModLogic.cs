@@ -279,6 +279,9 @@ public static class ModLogic
             blank.Form = form;
         }
 
+        if (blank.PersonalInfo.GetIndexOfAbility(blank.Ability) < 0)
+            blank.RefreshAbility(0);
+
         var template = EntityBlank.GetBlank(tr.Generation, tr.Version);
         var item = GetFormSpecificItem(tr.Version, tr.Generation, blank.Species, blank.Form);
         if (item is not null)

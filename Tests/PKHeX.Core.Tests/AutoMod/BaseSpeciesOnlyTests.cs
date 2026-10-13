@@ -1,3 +1,4 @@
+using System.Linq;
 using FluentAssertions;
 using PKHeX.Core.AutoMod;
 using Xunit;
@@ -40,5 +41,36 @@ public class BaseSpeciesOnlyTests
         ModLogic.SetBaseSpeciesOnlyLevel(pokemon, encounter);
 
         pokemon.CurrentLevel.Should().Be(encounter.LevelMin);
+    }
+
+    [Fact]
+    public void BaseSpeciesOnlyGeneratesTinkatinkFromVioletEggEncounter()
+    {
+        var trainer = new SimpleTrainerInfo(GameVersion.VL);
+        var personal = new SingleSpeciesPersonalTable(GameData.GetPersonal(trainer.Version), (ushort)Species.Tinkatink);
+        var tinkatink = trainer.GenerateLivingDex(personal, new LivingDexConfig { BaseSpeciesOnly = true })
+            .Should().ContainSingle(p => p.Species == (ushort)Species.Tinkatink).Which;
+
+        tinkatink.Version.Should().Be(GameVersion.VL);
+        tinkatink.CurrentLevel.Should().Be(1);
+
+        var legality = new LegalityAnalysis(tinkatink);
+        legality.Valid.Should().BeTrue(because: legality.Report());
+        legality.EncounterMatch.Should().BeOfType<EncounterEgg9>();
+    }
+
+    private sealed class SingleSpeciesPersonalTable(IPersonalTable inner, ushort species) : IPersonalTable
+    {
+        private readonly ushort _species = species;
+
+        public ushort MaxSpeciesID => _species;
+        public int Count => inner.Count;
+        public PersonalInfo this[int index] => inner[index];
+        public PersonalInfo this[ushort species, byte form] => inner[species, form];
+
+        public int GetFormIndex(ushort species, byte form) => inner.GetFormIndex(species, form);
+        public PersonalInfo GetFormEntry(ushort species, byte form) => inner.GetFormEntry(species, form);
+        public bool IsSpeciesInGame(ushort species) => species == _species && inner.IsSpeciesInGame(species);
+        public bool IsPresentInGame(ushort species, byte form) => species == _species && inner.IsPresentInGame(species, form);
     }
 }
