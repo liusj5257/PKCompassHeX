@@ -185,6 +185,9 @@ public static class APILegality
                 pk.ApplyPostBatchFixes();
             }
 
+            if (preferLowestLevelEncounter && enc is IEncounterEgg)
+                pk.CurrentLevel = 1;
+
             if (pk is PK1 pk1 && pk1.TradebackValid())
             {
                 satisfied = LegalizationResult.Regenerated;
